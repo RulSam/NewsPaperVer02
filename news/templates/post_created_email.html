@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Уведомление</title>
+</head>
+<body>
+    <h2>Привет! Новая
+    {% if Type == 'AR' %}
+    <a href="http://127.0.0.1:8000/articles/{{id}}">статья</a>
+    {% else %}
+    <a href="http://127.0.0.1:8000/news/{{id}}">новость</a>
+    {% endif %}
+        в вашем любимом разделе</h2>
+        <p>{{ text|truncatechars:20 }}</p>
+</body>
+</html>

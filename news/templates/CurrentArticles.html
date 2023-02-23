@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+text
+{% endblock title %}
+
+{% block content %}
+<p> {{ CurrentArticles.title|censor }} </p>
+<p> {{ CurrentArticles.text|censor }} </p>
+<p> <b> Рейтинг статьи : </b> {{ CurrentArticles.rating }} </p>
+<p> <b> Дата написания статьи : </b> {{ CurrentArticles.dateCreation|date:'d.m.Y' }} </p>
+{% if perms.articles.change_post %}
+<a href = '/articles/{{CurrentArticles.id}}/edit'> Редактировать </b>  </a> <br>
+{% endif %}
+{% if perms.articles.delete_post %}
+<a href = '/articles/{{CurrentArticles.id}}/delete'> Удалить </b>  </a> <br>
+{% endif %}
+{% endblock content %}

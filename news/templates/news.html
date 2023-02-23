@@ -1,0 +1,33 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Нововсти и статьи
+{% endblock title %}
+
+{% block content %}
+<h1>Все новости  и статьи -  <i> {{ news|length}} </i> </h1>
+<ul>
+    {% for post in news %}
+    <p>
+        <a href = '{{post.id}}'> {{ post.title|censor }} </b> <i>{{ post.dateCreation|date:'d.m.Y' }} </i> </p> </a> <br>
+        {{ post.text|truncatewords:20|censor }}
+    </p>
+    {% endfor %}
+</ul>
+ {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+    {{ page_obj.number }}
+ {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+{% endblock content %}
