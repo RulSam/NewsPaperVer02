@@ -85,7 +85,6 @@ class Comment(models.Model):
         self.rating -= 1
         self.save()
 
-
 class Subscriber(models.Model):
     user = models.ForeignKey(
         to=User,
