@@ -1,33 +1,51 @@
-from django.forms import DateTimeInput
-from django_filters import FilterSet, DateTimeFilter, CharFilter, ChoiceFilter
-from .models import Post
+from django.forms import DateInput
+from django_filters import FilterSet, CharFilter, DateFilter, ModelChoiceFilter, BooleanFilter
+from .models import Post, Author, Category, User
+
 
 class PostFilter(FilterSet):
-    dateTimeCreation = DateTimeFilter(
-        field_name='dateCreation',
+    headline = CharFilter('headline',
+                          label='Заголовок содержит:',
+                          lookup_expr='icontains', )
+
+    content = CharFilter('content',
+                         label='Текст содержит:',
+                         lookup_expr='icontains',
+                         )
+
+    author_post = ModelChoiceFilter(field_name='author_post',
+                                    label='Автор:',
+                                    lookup_expr='exact',
+                                    queryset=Author.objects.all()
+                                    )
+    categories = ModelChoiceFilter(field_name='categories',
+                                   label='Категория:',
+                                   lookup_expr='exact',
+                                   queryset=Category.objects.all()
+                                   )
+    time_create = DateFilter(
+        field_name='time_create',
+        widget=DateInput(attrs={'type': 'date'}),
         lookup_expr='gt',
-        label='Дата позже',
-        widget=DateTimeInput(
-            format='%Y-%m-%dT%H:%M',
-            attrs={'type': 'datetime-local'},
-        )
-
-    )
-    title = CharFilter(
-        field_name='title',
-        label='Заголовок'
-    )
-
-    categoryType = ChoiceFilter(
-        field_name='categoryType',
-        label='Категория',
-        choices=Post.CATEGORY_CHOICES
+        label='Дата публикации:'
     )
 
     class Meta:
         model = Post
-        fields = {
-            'title': ['exact'],
-            'categoryType': ['exact'],
-        }
+        fields = []
 
+
+class CategoryFilter(FilterSet):
+    name = ModelChoiceFilter(field_name='name',
+                             label='Выберите категорию новостей:',
+                             lookup_expr='exact',
+                             queryset=Category.objects.all()
+                             )
+
+    check_box = BooleanFilter(field_name='check_box',
+                              label='Даю согласие на отправку подборки по email')
+
+
+    class Meta:
+        model = Category
+        fields = []

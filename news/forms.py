@@ -1,21 +1,18 @@
-from django import forms
-from .models import Post
+from django.forms import ModelForm, BooleanField
+from .models import Post, Category
 
-class PostForm(forms.ModelForm):
-    title = forms.CharField(min_length=5)
+
+class PostForm(ModelForm):
+    check_box = BooleanField(label='Готово')
+
     class Meta:
         model = Post
-        fields = [
-            'author',
-            'postCategory',
-            'title',
-            'text',
-        ]
+        fields = ['status', 'headline', 'content', 'author_post', 'categories', 'check_box']
 
-        def clean(self):
-            cleanData = super().clean()
-            author = cleanData.post('author')
-            postCategory = cleanData.post('postCategory')
-            title = cleanData.post('title')
-            text = cleanData.post('text')
-            return cleanData
+
+class CategoryForm(ModelForm):
+    check_box = BooleanField(label='Даю согласие на рассылку по email')
+
+    class Meta:
+        model = Category
+        fields = ['name', 'subscribers', 'check_box']

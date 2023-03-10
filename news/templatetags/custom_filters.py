@@ -2,22 +2,15 @@ from django import template
 
 register = template.Library()
 
-bad_words = [
-    'сосиска',
-    'улитка',
-    'картошка',
-    'макбук',
-    'айфон',
-    'госдеп',
-    'матрица',
-]
 
 @register.filter(name='censor')
-def censor (value):
-    if not isinstance(value, str):
-        raise TypeError(f"Ошибка: переменная {value} должна быть строкой" )
-    for bw in value.split():
-        if bw in bad_words:
-            value = value.replace(bw, list(bw)[0] + ((len(bw) - 1) * "*"))
-    return value
+def censor(value):
+    stopword = ['культура', 'нюхать', 'зал', 'конец']
+    if type(value) is str:
+        for word in stopword:
+            value = value.replace(word, word[0] + "*" * (len(word) - 1))
+            value = value.replace(word.capitalize(), word[0] + "*" * (len(word) - 1))
+    else:
+        raise ValueError('Требуется строка')
 
+    return value
