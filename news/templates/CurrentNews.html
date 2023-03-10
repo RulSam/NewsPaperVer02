@@ -5,6 +5,8 @@
 text
 {% endblock title %}
 
+{% load cache %}
+{% cache 300 content %}
 {% block content %}
 <p> {{ CurrentNews.title|censor }} </p>
 <p> {{ CurrentNews.text|censor }} </p>
@@ -17,3 +19,4 @@ text
 <a href = '/news/{{CurrentNews.id}}/delete'> Удалить </b>  </a> <br>
 {% endif %}
 {% endblock content %}
+{% endcache %}

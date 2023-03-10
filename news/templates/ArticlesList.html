@@ -10,7 +10,7 @@
 <ul>
     {% for post in ArticlesList %}
     <p>
-        <a href = '{{post.id}}'> {{ post.title|censor }} </b> <i>{{ post.dateCreation|date:'d.m.Y' }} </i> </p> </a> <br>
+        <a href = '{{post.id}}'> {{ post.title|censor }} </b> <i>{{ post.dateCreation|date:'d.m.Y' }} </i> </a> <br>
         {{ post.text|truncatewords:20|censor }}
     </p>
     {% endfor %}

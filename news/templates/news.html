@@ -5,12 +5,14 @@
 Нововсти и статьи
 {% endblock title %}
 
+{% load cache %}
+{% cache 60 content %}
 {% block content %}
 <h1>Все новости  и статьи -  <i> {{ news|length}} </i> </h1>
 <ul>
     {% for post in news %}
     <p>
-        <a href = '{{post.id}}'> {{ post.title|censor }} </b> <i>{{ post.dateCreation|date:'d.m.Y' }} </i> </p> </a> <br>
+        <a href = '{{post.id}}'> {{ post.title|censor }} </b> <i>{{ post.dateCreation|date:'d.m.Y' }} </i>  </a> <br>
         {{ post.text|truncatewords:20|censor }}
     </p>
     {% endfor %}
@@ -31,3 +33,4 @@
        {% endif %}
    {% endif %}
 {% endblock content %}
+{% endcache %}

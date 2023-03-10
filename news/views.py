@@ -1,13 +1,17 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.db.models import Exists, OuterRef
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.views import View
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.core.cache import cache
 
 from .forms import PostForm
 from .models import Post, Category, Subscriber
 from .filters import PostFilter
+from .tasks import hello
 
 
 class NewsList(ListView):
@@ -17,13 +21,10 @@ class NewsList(ListView):
     def get_queryset(self):
         return Post.objects.filter(categoryType='NW').order_by('dateCreation')
 
-
 class CurrentNews(DetailView):
     model = Post
     template_name = 'CurrentNews.html'
     context_object_name = 'CurrentNews'
-    def get_queryset(self):
-        return Post.objects.filter(categoryType='NW')
 
 class ArticlesList(ListView):
     model = Post
@@ -32,13 +33,10 @@ class ArticlesList(ListView):
     def get_queryset(self):
         return Post.objects.filter(categoryType='AR').order_by('dateCreation')
 
-
 class CurrentArticles(DetailView):
     model = Post
     template_name = 'CurrentArticles.html'
     context_object_name = 'CurrentArticles'
-    def get_queryset(self):
-        return Post.objects.filter(categoryType='AR')
 
 class news(ListView):
     model = Post
@@ -46,7 +44,14 @@ class news(ListView):
     context_object_name = 'news'
     paginate_by = 10
     def get_queryset(self):
-        return Post.objects.filter().all()
+        return Post.objects.filter().all().order_by('id')
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
 
 class CurrentPost(DetailView):
     model = Post
@@ -164,3 +169,8 @@ def subscriptions(request):
         'subscriptions.html',
         {'categories': categories_with_subscriptions},
     )
+
+class IndexView(View):
+    def get(self, request):
+        hello.delay()
+        return HttpResponse('Hello!')
