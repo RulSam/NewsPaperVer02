@@ -52,6 +52,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
     'django_apscheduler',
+    'appointment.apps.AppointmentConfig',
+    'django.contrib.sites',
+    'django.contrib.appointment',
 ]
 SITE_ID = 1
 
@@ -86,6 +89,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'NewsPaper.wsgi.application'
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -155,22 +165,24 @@ ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = "Angry-Medic@yandex.ru"
-EMAIL_HOST_PASSWORD = "aqiqollksfwijnwk"
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = "123"
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
-DEFAULT_FROM_EMAIL = "Angry-Medic@yandex.ru"
+DEFAULT_FROM_EMAIL = ""
 
-SERVER_EMAIL = "Angry-Medic@yandex.ru"
+SERVER_EMAIL = ""
 
 MANAGERS = (
-    ('Taras', 'taras.zinch@gmail.com'),
+    ('', ''),
 )
 
-ADMINS = (
-    ('Taras', 'tarascroatia89@gmail.com'),
-)
+ADMINS = [
+    ('Skavik', 'skavik46111@gmail.com'),
+    # список всех админов в формате ('имя', 'их почта')
+]
+SERVER_EMAIL = 'peterbadson@yandex.ru'  # это будет у нас вместо аргумента FROM в массовой рассылке
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 APSCHEDULER_RUN_NOW_TIMEOUT = 25

@@ -1,14 +1,9 @@
-from datetime import timedelta
-
 from allauth.account.signals import email_confirmed
-from django.contrib.auth.models import User
-from django.core.mail import send_mail, EmailMultiAlternatives
-from django.db.models.signals import post_save
+from django.core.mail import send_mail, mail_managers
+from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
-from django.db.models.signals import m2m_changed
-
-
-from .models import Post, Category
+from .models import Appointment
+from .models import Post
 
 
 @receiver(email_confirmed)
@@ -34,3 +29,16 @@ def new_post(sender, action, instance, **kwargs):
                     from_email='defferius@yandex.ru',
                     recipient_list=[cat.email]
                 )
+
+
+@receiver(post_save, sender=Appointment)
+def notify_managers_appointment(sender, instance, created, **kwargs):
+    if created:
+        subject = f'{instance.client_name} {instance.date.strftime("%d %m %Y")}'
+    else:
+        subject = f'Appointment changed for {instance.client_name} {instance.date.strftime("%d %m %Y")}'
+
+    mail_managers(
+        subject=subject,
+        message=instance.message,
+    )

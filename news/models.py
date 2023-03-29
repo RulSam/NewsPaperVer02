@@ -2,11 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.core.cache import cache
+from datetime import datetime
 
 
 class Author(models.Model):
     authorUser = models.OneToOneField(User, on_delete=models.CASCADE)
     ratingAuthor = models.SmallIntegerField(default=0)
+
     def update_rating(self):
         postRat = self.post_set.aggregate(postRating=Sum('rating'))
         pRat = 0
@@ -19,8 +21,25 @@ class Author(models.Model):
         self.ratingAuthor = pRat * 3 + comRat
         self.save()
 
-    def __str__(self):
-        return self.authorUser.username
+
+class Appointment(models.Model):
+    date = models.DateField(
+        default=datetime.utcnow,
+    )
+    client_name = models.CharField(
+        max_length=200
+    )
+
+
+message = models.TextField()
+
+
+def __str__(self):
+    return f'{self.client_name}: {self.message}'
+
+
+def __str__(self):
+    return self.authorUser.username
 
 
 class Category(models.Model):
@@ -35,6 +54,7 @@ class Category(models.Model):
 
 
 class Post(models.Model):
+    categories = None
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
     ARTICLE = 'AR'
@@ -44,13 +64,14 @@ class Post(models.Model):
         (NEWS, 'новость')
     )
     categoryType = models.CharField(max_length=2,
-                            choices=CATEGORY_CHOICES,
-                            default=ARTICLE)
+                                    choices=CATEGORY_CHOICES,
+                                    default=ARTICLE)
     dateCreation = models.DateTimeField(auto_now_add=True)
     postCategory = models.ManyToManyField(Category, through='PostCategory')
     title = models.CharField(max_length=255)
     text = models.TextField()
     rating = models.IntegerField(default=0)
+
     def __str__(self):
         return self.title
 
@@ -93,6 +114,7 @@ class Comment(models.Model):
         self.rating -= 1
         self.save()
 
+
 class Subscriber(models.Model):
     user = models.ForeignKey(
         to=User,
@@ -104,5 +126,6 @@ class Subscriber(models.Model):
         on_delete=models.CASCADE,
         related_name='subscriptions',
     )
+
     def __str__(self):
-        return self.user.username+"-"+self.category.name
+        return self.user.username + "-" + self.category.name
